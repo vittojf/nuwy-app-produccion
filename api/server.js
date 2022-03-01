@@ -7,6 +7,7 @@ const nodemailer = require("nodemailer");
 const smtpTransport = require("nodemailer-smtp-transport");
 const hbs = require("nodemailer-express-handlebars");
 const path = require("path");
+const {google} =require("googleapis")
 const multer = require("multer");
 const fs = require("fs");
 
@@ -26,21 +27,22 @@ app.use((req, res, next) => {
 });
 app.use(cors());
 
+const oAuth2Client = new google.auth.OAuth2(process.env.CLIENT_ID,process.env.CLIENT_SECRET,process.env.REDIRECT_URI)
+oAuth2Client.setCredentials({refresh_token:process.env.REFRESH_TOKEN})
+
 const transport = nodemailer.createTransport(
-  smtpTransport({
+ {
     service: "gmail",
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
     auth: {
-      user: process.env.EMAIL,
-      pass: process.env.PASSWORD,
+   type:'OAuth2',
+   user: process.env.EMAIL,
+   clientId:process.env.CLIENT_ID,
+   clientSecret: process.env.CLIENT_SECRET,
+   refreshToken:process.env.REFRESH_TOKEN,
+   accessToken: oAuth2Client.getAccessToken()
+
     },
-    tls: {
-      // do not fail on invalid certs
-      rejectUnauthorized: false,
-    },
-  })
+  }
 );
 transport.use(
   "compile",
@@ -115,7 +117,6 @@ app.post("/send-mail", cors(), async (req, res, next) => {
     await transport.sendMail(mailOptions, (err, data) => {
       if (err) {
         res.status(500);
-        throw err;
       }
     });
   } catch (err) {
@@ -172,7 +173,7 @@ app.post("/send-mail-contact", async (req, res, next) => {
     await transport.sendMail(mailOptions, (err, data) => {
       if (err) {
         res.status(500);
-        throw err;
+  
       } else {
         return res.status(200).send("Correo Enviado!");
       }
