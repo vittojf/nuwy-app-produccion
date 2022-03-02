@@ -117,6 +117,8 @@ app.post("/send-mail", cors(), async (req, res, next) => {
     await transport.sendMail(mailOptions, (err, data) => {
       if (err) {
         res.status(500);
+      }else{
+        res.status(200).send("correo enviado")
       }
     });
   } catch (err) {
