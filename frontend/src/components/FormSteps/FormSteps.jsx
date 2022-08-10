@@ -38,9 +38,7 @@ function FormStep({
     const formData = new FormData();
     formData.append("avatar", file);
     await axiosInstance
-      .post("/imageupload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
+      .post("/imageupload", formData)
       .then((res) => {
         if (res.status === 200) {
         }
