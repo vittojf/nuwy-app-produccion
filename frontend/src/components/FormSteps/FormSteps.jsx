@@ -30,7 +30,7 @@ function FormStep({
   //https://nuwy-api-app.herokuapp.com/send-mail
   //http://localhost:4000/
   const axiosInstance = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+      baseURL:process.env.NODE_ENV === "development" ? process.env.REACT_APP_API_URL_DEV:process.env.REACT_APP_API_URL,
   });
   const sendMail = async (datos, datoEnvio, rates) => {
     let rate = { rate: rates };
