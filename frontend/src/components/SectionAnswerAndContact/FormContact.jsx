@@ -44,7 +44,7 @@ function  handleOnChange(e,name){
 async function sendMessageContact(){
 setRes(true)
   axios
-        .post("https://nuwy.io/send-mail-contact", data)
+        .post(process.env.NODE_ENV === "development" ? process.env.REACT_APP_API_URL_DEV:"https://nuwy.io/send-mail-contact", data)
         .then((res) => {
           setRes(false) 
           toast.success("Correo Enviado", {
